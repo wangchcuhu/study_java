@@ -1,7 +1,4 @@
 package Operator;
-
-import javafx.print.Collation;
-
 import java.util.*;
 
 /**
@@ -15,7 +12,7 @@ public class OwnObject {
     public static void main(String[] args) {
         ArrayList<Apple> apples =new ArrayList();
         for (int i=0;i<3;i++){
-            apples.add(new Apple());
+//            apples.add(new Apple());
 //            apples.add(new Orange());
         }
 //        for (int i=0;i<apples.size();i++){
@@ -48,16 +45,16 @@ class CollectionTest{
         }
     }
 }
-
-class Snow{}
-class Power extends Snow{}
-class Light extends Power{}
-class Heavy extends Power{}
-class AsListInference{
-    public static void main(String[] args) {
-        List<Snow>snow1= Arrays.asList(new Power(),new Light(),new Heavy());
-    }
-}
+//
+//class Snow{}
+//class Power extends Snow{}
+//class Light extends Power{}
+//class Heavy extends Power{}
+//class AsListInference{
+//    public static void main(String[] args) {
+//        List<Snow>snow1= Arrays.asList(new Power(),new Light(),new Heavy());
+//    }
+//}
 
 //Collection和Map两种容器的比较
 class PrintContainers{
@@ -329,6 +326,7 @@ class  InferenceOfIterator{
 class MyIterator implements Iterator<String>{
     protected String[] words =("Hello World").split("");
     private int index = 0;
+    //这里参照书上的写法不可以被foreach访问
     public Iterator<String> iterator() {
         return new Iterator<String>() {
             private int index = 0;
@@ -360,6 +358,41 @@ class MyIterator implements Iterator<String>{
         }
     }
 }
+//iterator 迭代器的多种行为
+class ReversibleArrayList<T> extends ArrayList<T>{
+    ReversibleArrayList(Collection<T> T) {
+        super(T);
+    }
+    public Iterator<T> reserved(){
+        return new Iterator<T>() {
+            private int index = size()-1;
+            @Override
+            public boolean hasNext() {
+                return index>-1;
+            }
+
+            @Override
+            public T next() {
+                return get(index--);
+            }
+        };
+    }
+
+    public static void main(String[] args) {
+        ReversibleArrayList<String> storage = new ReversibleArrayList(Arrays.asList("1", "2", "3", "4", "5", "6"));
+        for (String s : storage) {
+            System.out.println(s);
+        }
+        System.out.println();
+        //实现倒叙输出
+        for (Iterator<String> it = storage.reserved(); it.hasNext(); ) {
+            String s = it.next();
+            System.out.println(s);
+        }
+    }
+}
+
+
 
 
 
