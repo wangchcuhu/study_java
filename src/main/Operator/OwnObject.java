@@ -1,4 +1,5 @@
 package Operator;
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -193,7 +194,7 @@ class Dog extends Pet{
         System.out.println("Lively");
     }
 }
-class Person{
+class Person implements Serializable {
     Person(String name) {
         setName(name);
     }

@@ -1,5 +1,10 @@
 package Operator;
 
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.logging.Logger;
+
 /**
  * @program: Java_study
  * @description: 异常处理
@@ -74,3 +79,116 @@ class Training1{
         }
     }
 }
+//向日志中输出异常
+class loggingExceptions{
+    public static Logger logger = Logger.getLogger("loggingExceptions");
+    //向日志中打印异常
+    static void logException(Exception e){
+        StringWriter trace = new StringWriter();
+        e.printStackTrace(new PrintWriter(trace));
+        logger.severe(trace.toString());
+    }
+
+    public static void main(String[] args) {
+        try {
+            throw new NullPointerException();
+        } catch (NullPointerException e) {
+            logException(e);
+        }
+        try {
+            throw new Exception();
+        } catch (Exception e) {
+            e.printStackTrace(System.out);
+        }
+
+    }
+}
+
+//getMessage类似于普通对象上的toString
+class MyException1 extends Exception {
+    private int x;
+    MyException1() {
+        super();
+    }
+    MyException1(String msg) {
+        super(msg);
+    }
+    MyException1(String msg,int x) {
+        super(msg);
+        this.x = x;
+    }
+    public int val(){
+        return x;
+    }
+
+    @Override
+    public String getMessage() {
+        return "Detail Message"+x+ super.getMessage();
+    }
+
+    public static void main(String[] args) {
+        try {
+            throw new MyException1("f1", 999);
+
+        } catch (MyException1  e) {
+            e.printStackTrace(System.out);
+        }
+        try {
+            throw new MyException1("g1");
+        } catch (MyException1 myException1) {
+            //实际上会先输出警告类名+再调用getMessage输出到控制台，然后输出错误的行
+            myException1.printStackTrace();
+        }
+    }
+}
+//打印发生异常是栈中方法的调用顺序
+class WhoCalled{
+    static void f(){
+        try {
+            throw new Exception();
+        } catch (Exception e) {
+            for (StackTraceElement ste : e.getStackTrace()) {
+                System.out.println(ste.getMethodName());
+            }
+        }
+    }
+    static void g() {
+        f();
+    }
+    static void h() {
+        f();
+    }
+
+    public static void main(String[] args) {
+        g();
+        h();
+    }
+}
+//RuntimeException
+class NeverCaught{
+    static void f() {
+            throw new RuntimeException("From f()");
+    }
+
+    public void g() {
+        f();
+    }
+
+    public static void main(String[] args) {
+        NeverCaught neverCaught = new NeverCaught();
+        neverCaught.g();
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
