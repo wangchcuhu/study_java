@@ -195,6 +195,8 @@ class Dog extends Pet{
     }
 }
 class Person implements Serializable {
+    Person() {
+    }
     Person(String name) {
         setName(name);
     }
