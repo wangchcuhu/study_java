@@ -1,5 +1,7 @@
 package Operator;
 
+import ResourcePackage.RTTIResource;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -282,7 +284,77 @@ class useTest{
      consumer(new ProxyRealObject(new RealObject()));
     }
 }
-//动态代理
+
+//空对象的思想
+class Person3 {
+    private String name;
+    Person3() {
+    }
+    Person3(String name) {
+        this.name = name;
+    }
+    public static  class NullPerson extends Person3{
+        NullPerson() {
+            super();
+        }
+        NullPerson(String name) {
+            super(name);
+        }
+    }
+
+    public static final Person3 Null = new NullPerson();
+}
+//接口的解耦合并不是万能的
+interface A4{
+    void f();
+}
+
+class C4 implements A4 {
+    @Override
+    public void f() {
+        System.out.println("f");
+    }
+    void g() {
+        System.out.println("g");
+    }
+}
+
+class Test4 {
+    public static void main(String[] args) {
+        A4 c = new C4();
+        c.f();
+        c.getClass().getName();
+        if (c instanceof C4) {
+            ((C4) c).g();
+        }
+    }
+}
+
+//接口与类型信息
+class Test5 {
+    public static void main(String[] args) {
+        RTTIResource c = RTTIResource.getRTTIResource();
+        c.f();
+        //在知道方法名的情况下可以强行调用(反射的原理，已经获取了Class)
+        try {
+            callHiddenMethods(c, "g");
+            callHiddenMethods(c, "f");
+            callHiddenMethods(c, "w");
+            //运用反射的原理甚至连私有的方法和属性都可以调用
+            callHiddenMethods(c, "k");
+            System.out.println(c.w());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    static void callHiddenMethods(Object o,String s)throws Exception {
+        Method g = o.getClass().getDeclaredMethod(s);
+        g.setAccessible(true);
+        g.invoke(o);
+    }
+}
+
 
 
 
