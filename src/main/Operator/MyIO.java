@@ -1,14 +1,11 @@
 package Operator;
 
-import javafx.scene.control.ButtonType;
+import nu.xom.*;
 
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
@@ -356,6 +353,76 @@ class Logon implements Serializable{
         System.out.println(a);
     }
 }
+
+//XML
+class Person8{
+    private String name, age;
+    public Person8(String name, String age) {
+        this.name = name;
+        this.age = age;
+    }
+    //提供xml
+    public Element getXML() {
+        Element person = new Element("person");
+        Element name = new Element("name");
+        name.appendChild(this.name);
+        Element age = new Element("age");
+        age.appendChild(this.age);
+        person.appendChild(name);
+        person.appendChild(age);
+        return person;
+    }
+    //反序列化提供对象
+    public Person8(Element person) {
+        name = person.getFirstChildElement("name").getValue();
+        age = person.getFirstChildElement("age").getValue();
+    }
+
+    public static void format(OutputStream os, Document doc) throws Exception {
+        Serializer serializer = new Serializer(os, "ISO-8859-1");
+        serializer.setIndent(4);
+        serializer.setMaxLength(60);
+        serializer.write(doc);
+        serializer.flush();
+    }
+
+    public static void main(String[] args)throws Exception {
+        List<Person8> list = Arrays.asList(new Person8("liu", "22"), new Person8("zhang", "23"));
+        Element root = new Element("people");
+        for (Person8 person8 : list) {
+            //返回各自的xml对象(对象内部提供这个方法)
+            root.appendChild(person8.getXML());
+        }
+        Document document = new Document(root);
+        format(System.out, document);
+        //将xml文档写到people.xml文件中
+        format(new BufferedOutputStream(new FileOutputStream("people.xml")),document);
+    }
+}
+
+//从xml文档中反序列化Person对象
+class People extends ArrayList<Person8> {
+    public People(String filename) throws Exception{
+        //根据文件的路径创建Document对象
+        Document document = new Builder().build(filename);
+        Elements elements = document.getRootElement().getChildElements();
+        for (int i = 0; i < elements.size(); i++) {
+            add(new Person8(elements.get(i)));
+        }
+    }
+
+    public static void main(String[] args) throws Exception{
+//        String fileName = System.getProperty("user.dir") + "/people.xml";
+        //地址有问题
+//        People p = new People("people.xml");
+//        System.out.println(p);
+    }
+}
+
+
+
+
+
 
 
 
